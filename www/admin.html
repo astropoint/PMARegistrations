@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel='stylesheet' href='css/bootstrap.min.css' type='text/css' />
+<link rel='stylesheet' href='css/css.css' type='text/css' />
+<script src='js/jquery-3.3.1.min.js' defer></script>
+<script src='js/bootstrap.min.js' defer></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js" defer ></script>
+<script src="js/index.js" defer ></script>
+<title>Practice Managers Sign up form</title>
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' gap: ws: https://ssl.gstatic.com;style-src 'self' 'unsafe-inline' data: blob:;media-src *;img-src 'self' data: content:;script-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+
+</head>
+<body>
+	
+<div class='container'>
+
+	
+<div id='header' class='col-12'>
+	<img src='img/PMA-Alt2.jpg' height='100' />
+	<input type='button' value='Back to Form' class='btn btn-primary' onclick='window.location="index.html"' style='float:right;margin-top:20px;' /></div>
+
+<div id='content'>
+
+
+<h2>Admin</h2>
+
+<div class="alert alert-info" id='response'>
+	
+</div>
+
+<p style='display:none' id='notconnected'>Unable to connect to the CRM, please ensure you are connected to the internet</p>
+<p id='sendtocrmpara'><input type='button' value='Upload Pending records to CRM' class='btn btn-primary' id='uploadtocrm' /></p>
+<p><input type='button' value='Show records' class='btn btn-primary' id='showlocally' /></p>
+<p><input type='button' value='Delete local records' class='btn btn-primary' id='deletelocal' /><span id='deletebuttontext'></span></p>
+<p id='loggedinout'><input type='button' value='Change API key' class='btn btn-primary' onclick='window.location="login.html"' /></p>
+
+<p id='localrecords'></p>
+</div> <!--end content-->
+
+<div id='footer' class='col-12'>
+<p>Practice Managers Association UK</p>
+</div>
+
+</div> <!--end container-->
+</body>
+</html>

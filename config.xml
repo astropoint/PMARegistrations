@@ -10,9 +10,6 @@
     <preference name="android-minSdkVersion" value="26" />
     <preference name="android-targetSdkVersion" value="26" />
     <content src="index.html" />
-    <content src="admin.html" />
-    <content src="login.html" />
-    <content src="store.html" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
     <plugin name="cordova-plugin-console" source="npm" spec="~1.0.2" />

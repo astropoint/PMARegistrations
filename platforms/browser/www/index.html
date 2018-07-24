@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel='stylesheet' href='css/bootstrap.min.css' type='text/css' />
+<link rel='stylesheet' href='css/css.css' type='text/css' />
+<script src='js/jquery-3.3.1.min.js' defer></script>
+<script src='js/bootstrap.min.js' defer></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js" defer ></script>
+<script src="js/index.js" defer ></script>
+<title>Practice Managers Sign up form</title>
+<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' gap: ws: https://ssl.gstatic.com;style-src 'self' 'unsafe-inline' data: blob:;media-src *;img-src 'self' data: content:;script-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
+
+</head>
+<body>
+	
+<div class='container'>
+
+	
+<div id='header' class='col-12'>
+	<img src='img/PMA-Alt2.jpg' height='100' />
+	<input type='button' value='Admin' class='btn btn-primary' onclick='window.location="admin.html"' style='float:right;margin-top:20px;' /></div>
+
+<div id='content'>
+
+
+<h3>Please enter the details below</h3>
+
+<div class="alert alert-danger" id='formerror' style='display:none'>
+	
+<form action='store.php' method='post' id='mainform'></div>
+	
+	<div class="form-group row">
+		<label for="first_name" class="col-sm-2 col-form-label">First Name</label>
+		<div class="col-sm-10">
+			<input type="text" class="form-control" id='first_name' name='first_name' />
+		</div>
+	</div> 
+	
+	<div class="form-group row">
+		<label for="last_name" class="col-sm-2 col-form-label">Last Name</label>
+		<div class="col-sm-10">
+			<input type="text" class="form-control" id='last_name' name='last_name' />
+		</div>
+	</div>
+	
+	<div class="form-group row">
+		<label for="job_title" class="col-sm-2 col-form-label">Job Title</label>
+		<div class="col-sm-10">
+			<select class='form-control' name='job_title' id='job_title'>
+				<option value=''>&nbsp;</option>
+				<option value='Assistant Practice Manager'>Assistant Practice Manager</option>
+				<option value='GP'>GP</option>
+				<option value='GP Partner'>GP Partner</option>
+				<option value='Locum'>Locum</option>
+				<option value='Practice Administrator'>Practice Administrator</option>
+				<option value='Practice Nurse'>Practice Nurse</option>
+				<option value='Practice Manager'>Practice Manager</option>
+				<option value='Pharmacist'>Pharmacist</option>
+				<option value='Other'>Other</option>
+			</select>
+		</div>
+	</div>
+	
+	<div class="form-group row" id='job_title_other_row' style='display:none'>
+		<label for="job_title_other" class="col-sm-2 col-form-label">Other Job Title</label>
+		<div class="col-sm-10">
+			<input type="text" class="form-control" id='job_title_other' name='job_title_other' />
+		</div>
+	</div>
+	
+	<div class="form-group row">
+		<label for="mobilephone" class="col-sm-2 col-form-label">Organisation/<br>Medical Practice</label>
+		<div class="col-sm-10">
+			<input type="text" class="form-control" id='company' name='company' />
+		</div>
+	</div>
+	
+	<div class="form-group row">
+		<label for="email" class="col-sm-2 col-form-label">Email Address</label>
+		<div class="col-sm-10">
+			<input type="email" class="form-control" id='email' name='email' />
+		</div>
+	</div>
+	
+	<div class="form-group row">
+		<label for="mobilephone" class="col-sm-2 col-form-label">Phone</label>
+		<div class="col-sm-10">
+			<input type="tel" class="form-control" id='mobilephone' name='mobilephone' />
+		</div>
+	</div>
+	
+	<div class="form-group row">
+		<div class='col-12'>
+		What would you like more information on (please tick all relevant boxes):
+		</div>
+	</div>
+	
+	<div class="form-check form-check-inline">
+		<label class="form-check-label" for="pma_education">PMA Education Programme</label>&nbsp;&nbsp;
+		<input class="form-check-input" type="checkbox" id="pma_education" name="pma_education">
+	</div>
+	
+	<div class="form-check form-check-inline">
+		<label class="form-check-label" for="pma_workshops">PMA Workshops</label>&nbsp;&nbsp;
+		<input class="form-check-input" type="checkbox" id="pma_workshops" name="pma_workshops">
+	</div>
+	
+	<div class="form-group row">
+		
+		<label for="mobilephone" class="col-sm-2 col-form-label"><br />Any other information<br>you would like?</label>
+		<div class="col-sm-10"><br />
+			<textarea class="form-control" rows='3' id='notes' name='notes' ></textarea>
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<div class='col-sm-2'><input type='button' id='submitcontactform' value='Submit' class='btn btn-primary' /></div>
+	</div>
+
+</form>
+
+</div> <!--end content-->
+
+<div id='footer' class='col-12'>
+<p>Practice Managers Association UK</p>
+</div>
+
+</div> <!--end container-->
+</body>
+</html>

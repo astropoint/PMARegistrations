@@ -54,3 +54,7 @@ table.backwhite th, table.backgrey th{
 table.backwhite tr:last-child td, table.backgrey tr:last-child td{ 
 	border-bottom: solid black 1px;
 }
+
+.failedform{
+	background-color: #FFCCCC;
+}

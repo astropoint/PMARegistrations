@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var dbVersion = "1.7"; 
+var dbVersion = "1.7";
+//var CRMURL = "https://crm.practicemanagersuk.org";
+var CRMURL = "https://mhrclients.duckdns.org";
 
 var app = {
     // Application Constructor
@@ -249,67 +251,138 @@ function deleteLocalRecords(){
 
 function sendToCRM(){
 	if(apikeyset){
-		actuallySendToCRM();
+		checkIfWorkshopNeedsCreating();
 	}else{
 		window.location = "login.html";
 	}
 }
 
-function actuallySendToCRM(){
+function checkIfWorkshopNeedsCreating(){
+	var workshopid = $('#workshopid').val();
+	var formtype = $('#formtype').val();
+	var newworkshopname = $('#newworkshopname').val();
+	var newworkshopdate = $('#newworkshopdate').val();
+	var newworkshopfacilitator = $('#newworkshopfacilitator').val();
+	var newworkshophost = $('#newworkshophostlist').val();
+	var newworkshopccg = $('#newworkshopccglist').val();
+	var newworkshopnhscontact = $('#newworkshopnhscontact').val();
 	
-	checkStoredRecords();
-	var uploadedsomething = false;
-	if(numrows>=0){
-		for(var i = 0;i<numrows;i++){
+	if(formtype=='1' && workshopid=='-1'){
+		
+		if(newworkshopname!=''){
 			
-			if(localStorage.getItem("contact-"+i+"-status")==0){
-				uploadedsomething = true;
-				
-				data = "first_name="+localStorage.getItem("contact-"+i+"-first_name");
-				data += "&last_name="+localStorage.getItem("contact-"+i+"-last_name");
-				data += "&email="+localStorage.getItem("contact-"+i+"-email");
-				data += "&mobile_phone="+localStorage.getItem("contact-"+i+"-mobile_phone");
-				data += "&organisation="+localStorage.getItem("contact-"+i+"-organisation");
-				data += "&job_title="+localStorage.getItem("contact-"+i+"-job_title");
-				data += "&job_title_other="+localStorage.getItem("contact-"+i+"-job_title_other");
-				data += "&pma_education="+localStorage.getItem("contact-"+i+"-pma_education");
-				data += "&pma_workshops="+localStorage.getItem("contact-"+i+"-pma_workshops");
-				data += "&date_added="+localStorage.getItem("contact-"+i+"-date_added");
-				data += "&notes="+localStorage.getItem("contact-"+i+"-notes");
-				data += "&rownum="+i;
-				data += "&apikey="+apikey;
-				
-				$.ajax({
-					type: "POST",
-					url: "https://crm.practicemanagersuk.org/api/addprospect-app.php",
-					data: data, // serializes the form's elements.
-					success: function(response) {
-						if(response=='Failure: That api key cannot be found, please log in again'){
-							$('#response').slideDown();
-							$('#response').html('Your API key has not been found.  Please log in again below');
-						}else{
-							$('#response').slideDown();
-							var splitresponse = response.split(",");
-							$('#response').append(splitresponse[1]+' '+splitresponse[2]+' uploaded to the CRM<br>');
-							markRecordAsUploaded(splitresponse[0]);
-							checkDeleteStatus();
-						}
+			var data = "apikey="+apikey;
+			data += "&action=createworkshop";
+			data += "&newworkshopname="+newworkshopname;
+			data += "&newworkshopdate="+newworkshopdate;
+			data += "&newworkshopfacilitator="+newworkshopfacilitator;
+			data += "&newworkshophost="+newworkshophost;
+			data += "&newworkshopccg="+newworkshopccg;
+			data += "&newworkshopnhscontact="+newworkshopnhscontact;
+			
+			$.ajax({
+				type: "POST",
+				url: CRMURL+"/api/api.php",
+				data: data, // serializes the form's elements.
+				dataType: 'json',
+				success: function(response) {
+					if(response.success){
+						var newoption = "<option value='"+response.workshopid+"'>"+newworkshopname+"</option>";
+						$('#workshopid').append(newoption);
+						$('#workshopid').val(response.workshopid);
+						
+						$('#newworkshopname').val('');
+						$('#newworkshopdetails').slideUp();
+	
+						actuallySendToCRM();
+					}else{
+						alert("Unable to create workshop on the CRM, it may need to be created via the website before records can be uploaded");
 					}
-				});
+				}
+			});
+		}else{
+			alert("Please give the workshop a name");
+		}
+	}else{
+		actuallySendToCRM();
+	}
+}
+
+function actuallySendToCRM(){
+	var conferencename = $('#conferencename').val();
+	var formtype = $('#formtype').val();
+	var workshopid = $('#workshopid').val();
+	
+	$("input").removeClass('failedform');
+	$('#workshopiderror').hide();
+	$('#conferencenameerror').hide();
+	
+	if(formtype=='0' && conferencename==''){
+		$('#conferencenameerror').show();
+		$('#conferencename').addClass('failedform');
+	}else if(formtype=='1' && workshopid=='0'){
+		$('#workshopiderror').show();
+		$('#workshopid').addClass('failedform');
+	}else{
+		$('#conferencenameerror').hide();
+		$('#conferencename').removeClass('failedform');
+		checkStoredRecords();
+		var uploadedsomething = false;
+		if(numrows>=0){
+			for(var i = 0;i<numrows;i++){
+				
+				if(localStorage.getItem("contact-"+i+"-status")==0){
+					uploadedsomething = true;
+					
+					data = "first_name="+localStorage.getItem("contact-"+i+"-first_name");
+					data += "&last_name="+localStorage.getItem("contact-"+i+"-last_name");
+					data += "&email="+localStorage.getItem("contact-"+i+"-email");
+					data += "&mobile_phone="+localStorage.getItem("contact-"+i+"-mobile_phone");
+					data += "&organisation="+localStorage.getItem("contact-"+i+"-organisation");
+					data += "&job_title="+localStorage.getItem("contact-"+i+"-job_title");
+					data += "&job_title_other="+localStorage.getItem("contact-"+i+"-job_title_other");
+					data += "&pma_education="+localStorage.getItem("contact-"+i+"-pma_education");
+					data += "&pma_workshops="+localStorage.getItem("contact-"+i+"-pma_workshops");
+					data += "&date_added="+localStorage.getItem("contact-"+i+"-date_added");
+					data += "&notes="+localStorage.getItem("contact-"+i+"-notes");
+					data += "&rownum="+i;
+					data += "&apikey="+apikey;
+					data += "&formtype="+formtype;  //1 for workshop, 0 for conference
+					data += "&conferencename="+conferencename;
+					data += "&workshopid="+workshopid;
+					
+					$.ajax({
+						type: "POST",
+						url: CRMURL+"/api/addprospect-app.php",
+						data: data, // serializes the form's elements.
+						success: function(response) {
+							if(response=='Failure: That api key cannot be found, please log in again'){
+								$('#response').slideDown();
+								$('#response').html('Your API key has not been found.  Please log in again below');
+							}else{
+								$('#response').slideDown();
+								var splitresponse = response.split(",");
+								$('#response').append(splitresponse[1]+' '+splitresponse[2]+' uploaded to the CRM<br>');
+								markRecordAsUploaded(splitresponse[0]);
+								checkDeleteStatus();
+							}
+						}
+					});
+				}
 			}
+			
+		}else{
+			$('#response').slideDown();
+			$('#response').text("There are no pending uploads for the CRM");
 		}
 		
-	}else{
-		$('#response').slideDown();
-		$('#response').text("There are no pending uploads for the CRM");
+		if(!uploadedsomething){
+			$('#response').slideDown();
+			$('#response').text("There are no pending uploads for the CRM");		
+		}
+		
+		$('#localrecords').hide();
 	}
-	
-	if(!uploadedsomething){
-		$('#response').slideDown();
-		$('#response').text("There are no pending uploads for the CRM");		
-	}
-	
-	$('#localrecords').hide();
 	
 }
 
@@ -336,7 +409,7 @@ function checkAPIKey(){
 	
 	if(apikeyset){
 		$('#loggedinout').html("Logged in as "+full_name+"  <input type='button' value='Change Login' class='btn btn-primary' onclick='window.location=\"login.html\"' />");
-		$('#sendtocrmparam').html("<input type='button' value='Upload Pending records to CRM' class='btn btn-primary' id='uploadtocrm' />");
+		$('#sendtocrmpara').html("<input type='button' value='Upload Pending records to CRM' class='btn btn-primary' id='uploadtocrm' />");
 	}else{
 		$('#sendtocrmpara').html("You must log in before uploading details to the CRM");
 		$('#loggedinout').html("<input type='button' value='Login' class='btn btn-primary' onclick='window.location=\"login.html\"' />");
@@ -353,7 +426,7 @@ function login(){
 	
 	$.ajax({
 		type: "POST",
-		url: "https://crm.practicemanagersuk.org/api/app-login.php",
+		url: CRMURL+"/api/app-login.php",
 		data: data, // serializes the form's elements.
 		dataType: 'json',
 		success: function(response) {
@@ -369,6 +442,60 @@ function login(){
 				$('#response').slideDown();
 				$('#response').html(response.message);
 			}
+		}
+	});
+}
+
+function getWorkshopList(){
+	var data = "apikey="+apikey+"&action=getworkshops";
+	
+	$.ajax({
+		type: "POST",
+		url: CRMURL+"/api/api.php",
+		data: data, // serializes the form's elements.
+		success: function(response) {
+			workshops = JSON.parse(response);
+			var html = "<option value='0'>Select a workshop</option>";
+			html += "<option value='-1'>New workshop</option>";
+			$.each( workshops, function( key, workshop ) {
+				html += "<option value='"+workshop.id+"'>"+workshop.name+"</option>";
+			});
+			$('#workshopid').html(html);
+			getUploadFormDetails();
+		}
+	});
+}
+
+function getUploadFormDetails(){
+	var data = "apikey="+apikey+"&action=getccgs";
+	
+	$.ajax({
+		type: "POST",
+		url: CRMURL+"/api/api.php",
+		data: data, // serializes the form's elements.
+		success: function(response) {
+			ccgs = JSON.parse(response);
+			var html = "<option value='0'>Select a CCG</option>";
+			$.each( ccgs, function( key, ccg ) {
+				html += "<option value='"+ccg.id+"'>"+ccg.ccgname+"</option>";
+			});
+			$('#newworkshopccglist').html(html);
+		}
+	});
+	
+	var data2 = "apikey="+apikey+"&action=getusers";
+	
+	$.ajax({
+		type: "POST",
+		url: CRMURL+"/api/api.php",
+		data: data2, // serializes the form's elements.
+		success: function(response) {
+			users = JSON.parse(response);
+			var html = "<option value='0'>Select a host</option>";
+			$.each( users, function( key, user ) {
+				html += "<option value='"+user.name+"'>"+user.name+"</option>";
+			});
+			$('#newworkshophostlist').html(html);
 		}
 	});
 }
@@ -389,7 +516,7 @@ function checkDeleteStatus(){
 }
 
 function checkConnection(){
-	var url = "https://crm.practicemanagersuk.org/api/checkconnection.php"
+	var url = CRMURL+"/api/checkconnection.php"
 	var success = false;
 	
 	$.ajax({
@@ -399,7 +526,7 @@ function checkConnection(){
 					enableDisableWeb(false);
 			},
 			success: function(response){
-				console.log(response);
+				console.log("Connection check: "+response);
 				if(response==1){
 					enableDisableWeb(true);
 				}else{
@@ -411,7 +538,7 @@ function checkConnection(){
 }
 
 function enableDisableWeb(enable){
-	console.log(enable);
+
 	if(!enable){
 		$('#sendtocrmpara').hide();
 		$('#loggedinout').hide();
@@ -449,6 +576,25 @@ function readyFunction(){
 		});
 	});
 	 
+	$(document).on('change', '#formuploadworkshopradio', function(e){
+		e.preventDefault();
+		if($(this).is(':checked')){
+			getWorkshopList();
+			$('#uploadworkshopdiv').show();
+			$('#uploadconferencediv').hide();
+			$('#formtype').val('1');
+		}
+	});
+	 
+	$(document).on('change', '#conferenceuploadradio', function(e){
+		e.preventDefault();
+		if($(this).is(':checked')){
+			$('#uploadworkshopdiv').hide();
+			$('#uploadconferencediv').show();
+			$('#formtype').val('0');
+		}
+	});
+	 
 	$(document).on('click', '#submitcontactform', function(e){
 		e.preventDefault();
 		insertDB();
@@ -471,9 +617,51 @@ function readyFunction(){
 		}
 	});
 	
+	$(document).on('change', '#workshopid', function (e){
+		if($(this).val()=='-1'){
+			$('#newworkshopdetails').show();
+		}else{
+			$('#newworkshopdetails').hide();
+		}
+	});
+	
+	if($('#newworkshopdate').length){
+		document.getElementById('newworkshopdate').valueAsDate = new Date();
+	}
+	
 	$(document).on('submit', '#login', function(e){
 		e.preventDefault();
 		login();
+	});
+	
+	$(".select2").select2({
+		ajax: {
+			url: CRMURL+"/api/api.php",
+			dataType: 'json',
+			delay: 250,
+			data: function (params) {
+				return {
+					q: params.term, // search term
+					action: "searchcontacts",
+					apikey: apikey
+				};
+			},
+			processResults: function (data) {
+				var results = [];
+				$.each(data, function (index, account) {
+						results.push({
+								id: account.id,
+								text: account.name
+						});
+				});
+
+				return {
+						results: results
+				};
+		}
+		},
+		minimumInputLength: 3,
+		width: '100%'
 	});
 	
 	checkAPIKey();

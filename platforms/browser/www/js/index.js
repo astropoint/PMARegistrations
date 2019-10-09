@@ -61,7 +61,7 @@ function validateEmail(email) {
 
 var numrows = 0;
 
-function insertDB(){
+function insertDB(location){
 	var goodform = true;
 	
 	var first_name = $('#first_name').val();
@@ -80,6 +80,12 @@ function insertDB(){
 		pma_workshops = 1;
 	}else{
 		pma_workshops = 0;
+	}
+	var attended;
+	if ($('#attended').prop('checked')) {
+		attended = 1;
+	}else{
+		attended = 0;
 	}
 	var email = $('#email').val();
 	var mobilephone = $('#mobilephone').val();
@@ -106,29 +112,40 @@ function insertDB(){
 	}
 	var notes = $('#notes').val();
 	
-	console.log(goodform);
+	var rowtouse;
+	if(insertDB=='0'){
+		rowtouse = numrows;
+	}else{
+		rowtouse = localStorage.getItem('contactidtoedit');
+	}
 	
 	if(goodform){
 		checkStoredRecords();
 		var d = new Date();
 		
-		localStorage.setItem("contact-"+numrows+"-first_name", first_name);
-		localStorage.setItem("contact-"+numrows+"-last_name", last_name);
-		localStorage.setItem("contact-"+numrows+"-organisation", organisation);
-		localStorage.setItem("contact-"+numrows+"-email", email);
-		localStorage.setItem("contact-"+numrows+"-job_title", job_title);
-		localStorage.setItem("contact-"+numrows+"-job_title_other", job_title_other);
-		localStorage.setItem("contact-"+numrows+"-mobile_phone", mobilephone);
-		localStorage.setItem("contact-"+numrows+"-pma_workshops", pma_workshops);
-		localStorage.setItem("contact-"+numrows+"-pma_education", pma_education);
-		localStorage.setItem("contact-"+numrows+"-notes", notes);
-		localStorage.setItem("contact-"+numrows+"-status", 0);
-		localStorage.setItem("contact-"+numrows+"-date_added", d.toUTCString());
+		localStorage.setItem("contact-"+rowtouse+"-first_name", first_name);
+		localStorage.setItem("contact-"+rowtouse+"-last_name", last_name);
+		localStorage.setItem("contact-"+rowtouse+"-organisation", organisation);
+		localStorage.setItem("contact-"+rowtouse+"-email", email);
+		localStorage.setItem("contact-"+rowtouse+"-job_title", job_title);
+		localStorage.setItem("contact-"+rowtouse+"-job_title_other", job_title_other);
+		localStorage.setItem("contact-"+rowtouse+"-mobile_phone", mobilephone);
+		localStorage.setItem("contact-"+rowtouse+"-pma_workshops", pma_workshops);
+		localStorage.setItem("contact-"+rowtouse+"-pma_education", pma_education);
+		localStorage.setItem("contact-"+rowtouse+"-notes", notes);
+		localStorage.setItem("contact-"+rowtouse+"-attended", attended);
+		localStorage.setItem("contact-"+rowtouse+"-status", 0);
+		localStorage.setItem("contact-"+rowtouse+"-date_added", d.toUTCString());
 		
-		numrows++;
-		localStorage.setItem("numrows", numrows);
+		if(insertDB=='0'){
+			numrows++;
+			localStorage.setItem("numrows", numrows);
+			window.location = 'store.html';
+		}else{
+			window.location = 'admin.html';
+		}
 		
-		window.location = 'store.html';
+	
 	}else{
 		var output = "";
 		for(var i=0;i<error.length;i++){
@@ -144,7 +161,6 @@ function getNumNotUploaded(){
 	if(numrows>0){
 		var count = 0;
 		for(var i = 0;i<numrows;i++){
-			console.log(localStorage.getItem("contact-"+i+"-status"));
 			if(localStorage.getItem("contact-"+i+"-status")==0){
 				count++;
 			}
@@ -159,46 +175,58 @@ function readClientsLocally(){
 	
 	checkStoredRecords();
 	var output = "<table class='backwhite'>";
-	output += "<thead><th>Sent to CRM?</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Mobile Phone</th><th>Organisation</th><th>Job Title</th><th>PMA Education</th><th>PMA Workshops</th><th>Notes</th><th>Date Added</th></thead>";
+	output += "<thead><th>Sent to CRM?</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Mobile Phone</th><th>Organisation</th><th>Job Title</th><th>PMA Education</th><th>PMA Workshops</th><th>Notes</th><th>Date Added</th><th></th><th></th></thead>";
 	output += "<tbody>";
 	
 	if(numrows>0){
 		for(var i = 0;i<numrows;i++){
-			output += "<tr>";
-			output += "<td>";
-			if(localStorage.getItem("contact-"+i+"-status")==0){
-				output += "No";
-			}else{
-				output += "Yes";
+			if(localStorage.getItem("contact-"+i+"-status")!=2){
+				output += "<tr>";
+				output += "<td>";
+				if(localStorage.getItem("contact-"+i+"-status")==0){
+					output += "No";
+				}else{
+					output += "Yes";
+				}
+				output += "</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-first_name")+"</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-last_name")+"</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-email")+"</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-mobile_phone")+"</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-organisation")+"</td>";
+				if(localStorage.getItem("contact-"+i+"-job_title")=='Other'){
+					output += "<td>"+localStorage.getItem("contact-"+i+"-job_title_other")+"</td>";
+				}else{
+					output += "<td>"+localStorage.getItem("contact-"+i+"-job_title")+"</td>";
+				}
+				output += "<td>";
+				if(localStorage.getItem("contact-"+i+"-pma_education")==1){
+					output += "Yes";
+				}else{
+					output += "No";
+				}
+				output += "</td>";
+				output += "<td>";
+				if(localStorage.getItem("contact-"+i+"-pma_workshops")==1){
+					output += "Yes";
+				}else{
+					output += "No";
+				}
+				output += "</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-notes")+"</td>";
+				output += "<td>"+localStorage.getItem("contact-"+i+"-date_added")+"</td>";
+				output += "<td>";
+				if(localStorage.getItem("contact-"+i+"-status")==0){
+					output += "<i class='fas fa-edit fa-2x edituser' id='edituser-"+i+"'></i>";
+				}
+				output += "</td>";
+				output += "<td>";
+				if(localStorage.getItem("contact-"+i+"-status")==0){
+					output += "<i class='fas fa-trash fa-2x deleteuser' id='deleteuser-"+i+"'></i>";
+				}
+				output += "</td>";
+				output += "</tr>";
 			}
-			output += "</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-first_name")+"</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-last_name")+"</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-email")+"</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-mobile_phone")+"</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-organisation")+"</td>";
-			if(localStorage.getItem("contact-"+i+"-job_title")=='Other'){
-				output += "<td>"+localStorage.getItem("contact-"+i+"-job_title_other")+"</td>";
-			}else{
-				output += "<td>"+localStorage.getItem("contact-"+i+"-job_title")+"</td>";
-			}
-			output += "<td>";
-			if(localStorage.getItem("contact-"+i+"-pma_education")==1){
-				output += "Yes";
-			}else{
-				output += "No";
-			}
-			output += "</td>";
-			output += "<td>";
-			if(localStorage.getItem("contact-"+i+"-pma_workshops")==1){
-				output += "Yes";
-			}else{
-				output += "No";
-			}
-			output += "</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-notes")+"</td>";
-			output += "<td>"+localStorage.getItem("contact-"+i+"-date_added")+"</td>";
-			output += "</tr>";
 		}
 		
 		output += "</tbody></table>";
@@ -221,6 +249,33 @@ function clearForm(){
 	$('#notes').val('');
 	$('#pma_education').prop('checked', false);
 	$('#pma_workshops').prop('checked', false);
+	$('#attended').prop('checked', true);
+}
+
+function populateEditContactForm(){
+	var contactidtoedit = localStorage.getItem('contactidtoedit');
+	
+	if($.isNumeric(contactidtoedit) && contactidtoedit>=0){
+		$('#first_name').val(localStorage.getItem("contact-"+contactidtoedit+"-first_name"));
+		$('#last_name').val(localStorage.getItem("contact-"+contactidtoedit+"-last_name"));
+		$('#organisation').val(localStorage.getItem("contact-"+contactidtoedit+"-organisation"));
+		$('#email').val(localStorage.getItem("contact-"+contactidtoedit+"-email"));
+		$('#job_title_other').val(localStorage.getItem("contact-"+contactidtoedit+"-job_title_other"));
+		$('#job_title').val(localStorage.getItem("contact-"+contactidtoedit+"-job_title"));
+		$('#mobile_phone').val(localStorage.getItem("contact-"+contactidtoedit+"-mobile_phone"));
+		$('#notes').val(localStorage.getItem("contact-"+contactidtoedit+"-notes"));
+		if(localStorage.getItem("contact-"+contactidtoedit+"-pma_workshops")=='1'){
+			$('#pma_workshops').prop('checked', true);
+		}
+		if(localStorage.getItem("contact-"+contactidtoedit+"-pma_education")=='1'){
+			$('#pma_education').prop('checked', true);
+		}
+		if(localStorage.getItem("contact-"+contactidtoedit+"-attended")=='1'){
+			$('#attended').prop('checked', true);
+		}
+	}else{
+		window.location = 'admin.html';
+	}
 }
 
 function deleteLocalRecords(){
@@ -238,6 +293,7 @@ function deleteLocalRecords(){
 		localStorage.removeItem("contact-"+i+"-pma_education");
 		localStorage.removeItem("contact-"+i+"-notes");
 		localStorage.removeItem("contact-"+i+"-status");
+		localStorage.removeItem("contact-"+i+"-attended");
 		localStorage.removeItem("contact-"+i+"-date_added");
 	}
 	
@@ -246,6 +302,28 @@ function deleteLocalRecords(){
 	
 	$('#response').slideUp();
 	$('#localrecords').slideUp();
+	
+}
+
+function deleteSingleRecord(rowtodelete){
+	
+	checkStoredRecords();
+
+	localStorage.removeItem("contact-"+rowtodelete+"-first_name");
+	localStorage.removeItem("contact-"+rowtodelete+"-last_name");
+	localStorage.removeItem("contact-"+rowtodelete+"-organisation");
+	localStorage.removeItem("contact-"+rowtodelete+"-email");
+	localStorage.removeItem("contact-"+rowtodelete+"-job_title");
+	localStorage.removeItem("contact-"+rowtodelete+"-job_title_other");
+	localStorage.removeItem("contact-"+rowtodelete+"-mobile_phone");
+	localStorage.removeItem("contact-"+rowtodelete+"-pma_workshops");
+	localStorage.removeItem("contact-"+rowtodelete+"-pma_education");
+	localStorage.removeItem("contact-"+rowtodelete+"-notes");
+	localStorage.removeItem("contact-"+rowtodelete+"-attended");
+	localStorage.removeItem("contact-"+rowtodelete+"-date_added");
+
+	localStorage.setItem("contact-"+rowtodelete+"-status", 2);
+	
 	
 }
 
@@ -331,7 +409,7 @@ function actuallySendToCRM(){
 		if(numrows>=0){
 			for(var i = 0;i<numrows;i++){
 				
-				if(localStorage.getItem("contact-"+i+"-status")==0){
+				if(localStorage.getItem("contact-"+i+"-status")==0 && localStorage.getItem("contact-"+i+"-attended")==1){
 					uploadedsomething = true;
 					
 					data = "first_name="+localStorage.getItem("contact-"+i+"-first_name");
@@ -597,7 +675,13 @@ function readyFunction(){
 	 
 	$(document).on('click', '#submitcontactform', function(e){
 		e.preventDefault();
-		insertDB();
+		insertDB(0);
+	});
+	
+	
+	$(document).on('click', '#updatecontactform', function(e){
+		e.preventDefault();
+		insertDB(1);
 	});
 	
 	$('#showlocally').click(function(e){
@@ -625,8 +709,32 @@ function readyFunction(){
 		}
 	});
 	
+	$(document).on('click', '.edituser', function(e){
+		var splitid = $(this).attr('id');
+		var id = splitid.split("-")[1];
+		localStorage.setItem('contactidtoedit', id);
+		window.location = 'edit.html';
+	});
+	
+	$(document).on('click', '.deleteuser', function(e){
+		var splitid = $(this).attr('id');
+		var id = splitid.split("-")[1];
+		if(confirm("Are you sure you wish to permanently remove this contact's details")){
+			deleteSingleRecord(id);
+			window.location.reload();
+		}
+		
+	});
+	
 	if($('#newworkshopdate').length){
 		document.getElementById('newworkshopdate').valueAsDate = new Date();
+	}
+	
+	if($('#updatecontactform').length){
+		populateEditContactForm();
+	}else{
+		//not on the edit page, so reset edit contact id
+		localStorage.setItem('contactidtoedit', '-1');
 	}
 	
 	$(document).on('submit', '#login', function(e){

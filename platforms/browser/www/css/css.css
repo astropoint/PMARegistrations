@@ -58,3 +58,7 @@ table.backwhite tr:last-child td, table.backgrey tr:last-child td{
 .failedform{
 	background-color: #FFCCCC;
 }
+
+input[type=checkbox] {
+    transform: scale(1.5);
+}

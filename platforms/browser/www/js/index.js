@@ -1,57 +1,37 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-var dbVersion = "1.7";
-//var CRMURL = "https://crm.practicemanagersuk.org";
-var CRMURL = "https://mhrclients.duckdns.org";
+
+var CRMURL = "https://crm.practicemanagersuk.org";
+//var CRMURL = "https://mhrclients.duckdns.org";
 
 var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-				readyFunction();
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+	// Application Constructor
+	initialize: function() {
+			this.bindEvents();
+	},
+	// Bind Event Listeners
+	//
+	// Bind any events that are required on startup. Common events are:
+	// 'load', 'deviceready', 'offline', and 'online'.
+	bindEvents: function() {
+			document.addEventListener('deviceready', this.onDeviceReady, false);
+	},
+	// deviceready Event Handler
+	//
+	// The scope of 'this' is the event. In order to call the 'receivedEvent'
+	// function, we must explicitly call 'app.receivedEvent(...);'
+	onDeviceReady: function() {
+			readyFunction();
+	},
+	// Update DOM on a Received Event
+	receivedEvent: function(id) {
+			var parentElement = document.getElementById(id);
+			var listeningElement = parentElement.querySelector('.listening');
+			var receivedElement = parentElement.querySelector('.received');
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+			listeningElement.setAttribute('style', 'display:none;');
+			receivedElement.setAttribute('style', 'display:block;');
 
-        console.log('Received Event: ' + id);
-    }	
-    
-    
+			console.log('Received Event: ' + id);
+	}
 };
 
 function validateEmail(email) {
@@ -88,7 +68,7 @@ function insertDB(location){
 		attended = 0;
 	}
 	var email = $('#email').val();
-	var mobilephone = $('#mobilephone').val();
+	var mobilephone = $('#mobile_phone').val();
 	
 	var error = new Array();
 	if(first_name==''){
@@ -113,7 +93,7 @@ function insertDB(location){
 	var notes = $('#notes').val();
 	
 	var rowtouse;
-	if(insertDB=='0'){
+	if(location=='0'){
 		rowtouse = numrows;
 	}else{
 		rowtouse = localStorage.getItem('contactidtoedit');
@@ -136,8 +116,7 @@ function insertDB(location){
 		localStorage.setItem("contact-"+rowtouse+"-attended", attended);
 		localStorage.setItem("contact-"+rowtouse+"-status", 0);
 		localStorage.setItem("contact-"+rowtouse+"-date_added", d.toUTCString());
-		
-		if(insertDB=='0'){
+		if(location=='0'){
 			numrows++;
 			localStorage.setItem("numrows", numrows);
 			window.location = 'store.html';
@@ -175,7 +154,7 @@ function readClientsLocally(){
 	
 	checkStoredRecords();
 	var output = "<table class='backwhite'>";
-	output += "<thead><th>Sent to CRM?</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Mobile Phone</th><th>Organisation</th><th>Job Title</th><th>PMA Education</th><th>PMA Workshops</th><th>Notes</th><th>Date Added</th><th></th><th></th></thead>";
+	output += "<thead><th>Sent to CRM?</th><th>First Name</th><th>Last Name</th><th>Email</th><th>Mobile Phone</th><th>Organisation</th><th>Job Title</th><th>PMA Education</th><th>PMA Workshops</th><th>Notes</th><th>Date Added</th><th>Attended<th></th><th></th></thead>";
 	output += "<tbody>";
 	
 	if(numrows>0){
@@ -215,6 +194,13 @@ function readClientsLocally(){
 				output += "</td>";
 				output += "<td>"+localStorage.getItem("contact-"+i+"-notes")+"</td>";
 				output += "<td>"+localStorage.getItem("contact-"+i+"-date_added")+"</td>";
+				output += "<td>";
+				if(localStorage.getItem("contact-"+i+"-attended")=='0'){
+					output += "No";
+				}else{
+					output += "Yes";
+				}
+				output += "</td>";
 				output += "<td>";
 				if(localStorage.getItem("contact-"+i+"-status")==0){
 					output += "<i class='fas fa-edit fa-2x edituser' id='edituser-"+i+"'></i>";
@@ -675,13 +661,13 @@ function readyFunction(){
 	 
 	$(document).on('click', '#submitcontactform', function(e){
 		e.preventDefault();
-		insertDB(0);
+		insertDB('0');
 	});
 	
 	
 	$(document).on('click', '#updatecontactform', function(e){
 		e.preventDefault();
-		insertDB(1);
+		insertDB('1');
 	});
 	
 	$('#showlocally').click(function(e){

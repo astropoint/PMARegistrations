@@ -203,12 +203,12 @@ function readClientsLocally(){
 				output += "</td>";
 				output += "<td>";
 				if(localStorage.getItem("contact-"+i+"-status")==0){
-					output += "<i class='fas fa-edit fa-2x edituser' id='edituser-"+i+"'></i>";
+					output += "<i class='fas fa-edit fa-2x' onclick='editUser("+i+")' ></i>";
 				}
 				output += "</td>";
 				output += "<td>";
 				if(localStorage.getItem("contact-"+i+"-status")==0){
-					output += "<i class='fas fa-trash fa-2x deleteuser' id='deleteuser-"+i+"'></i>";
+					output += "<i class='fas fa-trash fa-2x' onclick='deleteUser("+i+")'></i>";
 				}
 				output += "</td>";
 				output += "</tr>";
@@ -601,6 +601,18 @@ function checkConnection(){
 	});
 }
 
+function editUser(id){
+	localStorage.setItem('contactidtoedit', id);
+	window.location = 'edit.html';
+}
+
+function deleteUser(id){
+	if(confirm("Are you sure you wish to permanently remove this contact's details")){
+		deleteSingleRecord(id);
+		window.location.reload();
+	}
+}
+
 function enableDisableWeb(enable){
 
 	if(!enable){
@@ -610,7 +622,7 @@ function enableDisableWeb(enable){
 	}else{
 		$('#sendtocrmpara').show();
 		$('#loggedinout').show();
-		$('#notconnected').hide();		
+		$('#notconnected').hide();
 	}
 }
 
@@ -693,23 +705,6 @@ function readyFunction(){
 		}else{
 			$('#newworkshopdetails').hide();
 		}
-	});
-	
-	$(document).on('click', '.edituser', function(e){
-		var splitid = $(this).attr('id');
-		var id = splitid.split("-")[1];
-		localStorage.setItem('contactidtoedit', id);
-		window.location = 'edit.html';
-	});
-	
-	$(document).on('click', '.deleteuser', function(e){
-		var splitid = $(this).attr('id');
-		var id = splitid.split("-")[1];
-		if(confirm("Are you sure you wish to permanently remove this contact's details")){
-			deleteSingleRecord(id);
-			window.location.reload();
-		}
-		
 	});
 	
 	if($('#newworkshopdate').length){
